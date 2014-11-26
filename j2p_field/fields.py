@@ -67,11 +67,11 @@ class J2PEncryptedFieldMixin(object):
         except Exception:
             pass
 
-        return super(J2PEncryptedFieldMixin, self).to_python(value)
-        # return value
+        # return super(J2PEncryptedFieldMixin, self).to_python(value)
+        return value
 
     def get_prep_value(self, value):
-        value = super(J2PEncryptedFieldMixin, self).get_prep_value(value)
+        # value = super(J2PEncryptedFieldMixin, self).get_prep_value(value)
 
         if value is None or value == '':
             return value
@@ -81,10 +81,8 @@ class J2PEncryptedFieldMixin(object):
                 value = self.cryptor().encrypt(value)
             except Exception:
                 pass
-        else:
-            value = str(value)
 
-        return value
+        return str(value)
 
     def get_db_prep_value(self, value, connection, prepared=False):
         if not prepared:

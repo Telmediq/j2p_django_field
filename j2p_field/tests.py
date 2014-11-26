@@ -31,27 +31,49 @@ class J2PEncryptedTextFieldTester(TestCase):
         )
         return cursor.fetchone()[0]
 
+    def set_db_value(self, char_field=None, text_field=None):
+        """
+        Insert the simple model into the database without using the model structure.
+        This circumvents the encryption/decryption of the model.
+
+        :param char_field:
+        :param text_field:
+        :return:
+        """
+        char_field = 'null' if char_field is None else str(char_field)
+        text_field = 'null' if text_field is None else str(text_field)
+
+        cursor = connection.cursor()
+
+        query = 'insert into j2p_field_testingmodel (char_field, text_field) values (\'{0}\', \'{1}\');'
+        cursor.execute(query.format(char_field, text_field))
+
     def test_char_field_decryption(self):
 
+        # Set encrypted content in the database
         for known_plaintext, known_ciphertext in self.encryptions.items():
-            model = TestingModel()
-            model.char_field = known_ciphertext
-            model.save()
+            self.set_db_value(char_field=known_ciphertext)
 
-            plaintext = self.get_db_value('char_field', model.id)
-            # plaintext = model.char_field
-            self.assertEqual(plaintext, known_plaintext)
+        # Get objects out of the DB using the model (should decrypt)
+        test_models = TestingModel.objects.all()
+        plaintexts = self.encryptions.keys()
+
+        for model in test_models:
+            cf = model.char_field
+            self.assertIn(cf, plaintexts)
 
     def test_text_field_decryption(self):
 
+        # Set encrypted content in the database
         for known_plaintext, known_ciphertext in self.encryptions.items():
-            model = TestingModel()
-            model.text_field = known_ciphertext
-            model.save()
+            self.set_db_value(text_field=known_ciphertext)
 
-            plaintext = self.get_db_value('text_field', model.id)
-            # plaintext = model.text_field
-            self.assertEqual(plaintext, known_plaintext)
+        test_models = TestingModel.objects.all()
+        plaintexts = self.encryptions.keys()
+
+        for model in test_models:
+            tf = model.text_field
+            self.assertIn(tf, plaintexts)
 
 
 
