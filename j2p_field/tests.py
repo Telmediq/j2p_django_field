@@ -39,6 +39,7 @@ class J2PEncryptedTextFieldTester(TestCase):
             model.save()
 
             plaintext = self.get_db_value('char_field', model.id)
+            # plaintext = model.char_field
             self.assertEqual(plaintext, known_plaintext)
 
     def test_text_field_decryption(self):
@@ -49,6 +50,7 @@ class J2PEncryptedTextFieldTester(TestCase):
             model.save()
 
             plaintext = self.get_db_value('text_field', model.id)
+            # plaintext = model.text_field
             self.assertEqual(plaintext, known_plaintext)
 
 
