@@ -1,4 +1,4 @@
-Django==1.7.1
+Django==2.2.28
 Jasypt2Python==1.0.1
 pycrypto==2.6.1
 wsgiref==0.1.2
